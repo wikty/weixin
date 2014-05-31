@@ -75,9 +75,20 @@ class wechatCallbackapiTest
     public function handleText($postObj){
         $keyword = trim($postObj->Content);
         if(!empty($keyword)){
+
+            // help text
+            if($keyword == 'help' || $keyword == 'h' || $keyword == "帮助"){
+                $contentStr = "目前平台功能如下：".
+                        "\n"."【1】 输入食材名查找菜谱，如输入：酸奶，韭菜，菠萝".
+                        "\n"."【2】 输入完整菜名或菜名的一部分，如输入：".
+                        "\n"."【3】 输入地域菜系名，如输入：日本料理，法国菜，赣菜";
+            }
+            else{
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////should parse $keyword to logical
-            $contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
+                $contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
+            }
+            
             $resultStr = $this->generateTextResponse($postObj, $contentStr);
             return $resultStr;
         }

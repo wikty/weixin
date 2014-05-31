@@ -54,32 +54,80 @@ class wechatCallbackapiTest
 		if (!empty($postStr)){
                 
               	$postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-                $fromUsername = $postObj->FromUserName;
-                $toUsername = $postObj->ToUserName;
-                $keyword = trim($postObj->Content);
-                $time = time();
-                $textTpl = "<xml>
-							<ToUserName><![CDATA[%s]]></ToUserName>
-							<FromUserName><![CDATA[%s]]></FromUserName>
-							<CreateTime>%s</CreateTime>
-							<MsgType><![CDATA[%s]]></MsgType>
-							<Content><![CDATA[%s]]></Content>
-							<FuncFlag>0</FuncFlag>
-							</xml>";             
-				if(!empty( $keyword ))
-                {
-              		$msgType = "text";
-                	$contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
-                	$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
-                	echo $resultStr;
-                }else{
-                	echo "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
+                
+                // handle various MsgType
+                switch($postObj->MsgType){
+                    case "text":
+                        $resultStr = $this->handleText($postObj);
+                        break;
+                    case "event":
+                        $resultStr = $this->handleEvent($postObj);
+                        break;
                 }
+                echo $resultStr;
 
         }else {
         	echo "";
         	exit;
         }
+    }
+
+    public function handleText($postObj){
+        $keyword = trim($postObj->Content);
+        if(!empty($keyword)){
+/////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////should parse $keyword to logical
+            $contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
+            $resultStr = $this->generateTextResponse($postObj, $contentStr);
+            return $resultStr;
+        }
+        else{
+            $contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
+            $resultStr = $this->generateTextResponse($postObj, $contentStr);
+            return $resultStr;
+        }
+    }
+
+    public function handleEvent($postObj){
+        $contentStr = "";
+        // handle various event
+        switch($postObj->Event){
+            case "subscribe":
+                $contentStr = "感谢您关注【每天一菜】".
+                "\n"."微信号：dailycookbook".
+                "\n"."我们致力于为您提供一本全面，方便易用的百科式菜谱，每天一道菜让你成为巧厨能手。".
+                "\n"."目前平台功能如下：".
+                "\n"."【1】 输入食材名查找菜谱，如输入：酸奶，韭菜，菠萝".
+                "\n"."【2】 输入完整菜名或菜名的一部分，如输入：".
+                "\n"."【3】 输入地域菜系名，如输入：日本料理，法国菜，赣菜".
+                "\n"."更多内容，敬请期待...";
+                break;
+            case "unsubscribe":
+                $contentStr = "您的离开让我很忧伤！";
+                break;
+            default:
+                $contentStr = "Unknow Event: ".$postObj->Event;
+                break;
+        }
+        $resultStr = $this->generateTextResponse($postObj, $contentStr);
+        return $resultStr;
+    }
+
+    public function generateTextResponse($postObj, $contentStr, $flag=0){
+        $textTpl = "<xml>
+                    <ToUserName><![CDATA[%s]]></ToUserName>
+                    <FromUserName><![CDATA[%s]]></FromUserName>
+                    <CreateTime>%s</CreateTime>
+                    <MsgType><![CDATA[%s]]></MsgType>
+                    <Content><![CDATA[%s]]></Content>
+                    <FuncFlag>%d</FuncFlag>
+                    </xml>";
+        $msgType = 'text';
+        $time = time();
+        $resultStr = sprintf($textTpl, $postObj->FromUserName, 
+            $postObj->ToUserName, $time, $msgType, $contentStr, $flag);
+        return $resultStr;
+
     }
 		
 	private function checkSignature()

@@ -7,17 +7,41 @@
 define("TOKEN", "xiaowenbin_999");
 $wechatObj = new wechatCallbackapiTest();
 $wechatObj->valid();
+$wechatObj->responseMsg();
+
+
 
 class wechatCallbackapiTest
 {
 	public function valid()
     {
-        $echoStr = $_GET["echostr"];
+        // For first time, weixin server GET request
+        // has querystring: signature, nonce, timestamp, echostr
+        // To become a developer, if valid signature is ok
+        // you should echo the echostr
+        
+        // $echoStr = $_GET["echostr"];
+        // //valid signature , option
+        // if($this->checkSignature()){
+        // 	 echo $echoStr; // just for first initial
+        // 	 exit;
 
-        //valid signature , option
+        // }
+
+        
+        // Now you are a developer, weixin server GET
+        // request querystring: signature, nonce, timestamp
+        // so you can valid signature too.
+
         if($this->checkSignature()){
-        	echo $echoStr;
-        	exit;
+            // the request can be trusted from weixin server
+            // now you can process the request
+            echo '';
+        }
+        else{
+            // refuse requestes that not come form  wexin server
+            echo 'This server is only accepted requests come from weixin';
+            exit;
         }
     }
 
@@ -45,11 +69,11 @@ class wechatCallbackapiTest
 				if(!empty( $keyword ))
                 {
               		$msgType = "text";
-                	$contentStr = "Welcome to wechat world!";
+                	$contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
                 	$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
                 	echo $resultStr;
                 }else{
-                	echo "Input something...";
+                	echo "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
                 }
 
         }else {

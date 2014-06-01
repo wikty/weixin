@@ -136,7 +136,6 @@ class wechatCallbackapiTest
                 switch($suffixStr){
                     case "菜名":
                     case "食材":
-                        echo '';
                         $contentStr = '';
                         $cookbooks = fetchcookbooks($prefixStr);
                         if(!empty($cookbooks)){
@@ -242,7 +241,31 @@ class wechatCallbackapiTest
                         }
                         break;
                     default:
-                       
+                    // default is $keyword as 菜名
+                        $contentStr = '';
+                        $cookbooks = fetchcookbooks($keyword);
+                        if(!empty($cookbooks)){
+                            $content = '';
+                            foreach($cookbooks as $cookbook){
+                                $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                            }
+                            $contentStr = nsprintf($this->feedbackText, array(
+                                'prefix' => '',
+                                'title' => $keyword,
+                                'suffix' => '的菜谱有：',
+                                'content' => $content,
+                                'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
+                            ));
+                        }
+                        if(empty($contentStr)){
+                            $contentStr = nsprintf($this->feedbackText, array(
+                                'prefix' => 'Sorry，系统中没有菜谱',
+                                'title' => $keyword,
+                                'suffix' => '',
+                                'content' => "\n".'或者你应将该菜名换成习惯的称呼',
+                                'tips' => "\n".'请试试别的。'
+                            ));
+                        }
                         break;
                 }
             }

@@ -13,12 +13,16 @@ $wechatObj->responseMsg();
 
 class wechatCallbackapiTest
 {
-    private $helpText = "目前平台功能如下：".
+    private $helpText = '';
+    
+    public function __construct(){
+        $this->helpText = "目前平台功能如下：".
                         "\n"."【1】 输入食材名查找菜谱，如输入：酸奶食材，韭菜食材，菠萝食材".
                         "\n"."【2】 输入完整菜名或菜名的一部分，如输入：韭菜炒蛋皮菜名，果茶菜名".
                         "\n"."【3】 输入地域菜系名，如输入：日本料理菜系，法国菜菜系，赣菜菜系".
                         "\n"."【4】 输入标签查询所属的菜谱，如输入：功效标签，人群标签，疾病标签".
                         "\n"."【5】 帮助命令：帮助，help，h";
+    }
 
 	public function valid()
     {
@@ -143,15 +147,13 @@ class wechatCallbackapiTest
 
                         break;
                 }
-
-                //$contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
             }
             
             $resultStr = $this->generateTextResponse($postObj, $contentStr);
             return $resultStr;
         }
         else{
-            $contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
+            $contentStr = "不在沉默中爆发就在沉默中死亡";
             $resultStr = $this->generateTextResponse($postObj, $contentStr);
             return $resultStr;
         }

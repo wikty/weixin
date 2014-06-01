@@ -92,7 +92,7 @@ class wechatCallbackapiTest
                 $contentStr = $this->helpText;
             }
             // cookbook
-            else if(filter_var($keyword, FILTER_VALIDATE_INT){
+            else if(filter_var($keyword, FILTER_VALIDATE_INT)){
                 $cookbook = fetchcookbook($keyword);
                 if(!empty($cookbook)){
                     // no "\n".'简介： '.$cookbook['imtro'].

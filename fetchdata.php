@@ -6,7 +6,7 @@ function fetchcuisine($cuisineId){
     $json = file_get_contents($url.'?'.$querystring);
     $data = json_decode($json, true);
     $result = array();
-    if(empty($data['result']) return $result;
+    if(empty($data['result'])) return $result;
     foreach($data['result']['data'] as $item){
         array_push($result, array($item['title'] => $item['id']));
     }

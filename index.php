@@ -30,6 +30,7 @@ class wechatCallbackapiTest
     
     public function __construct(){
         $this->helpText = "目前平台功能如下：".
+                        "\n"."【0】 平台正在测试阶段，现在仅支持帮助功能和输入一串数字来返回一个菜谱".
                         "\n"."【1】 输入食材名查找菜谱，如输入：酸奶食材，韭菜食材，菠萝食材".
                         "\n"."【2】 输入完整菜名或菜名的一部分，如输入：韭菜炒蛋皮菜名，果茶菜名".
                         "\n"."【3】 输入地域菜系名，如输入：日本料理菜系，法国菜菜系，赣菜菜系".
@@ -176,12 +177,9 @@ class wechatCallbackapiTest
                         $json = file_get_contents('./cuisines.json');
                         $cuisines = json_decode($json, true);
                         $contentStr = '';
-                        echo '';
                         if(array_key_exists($prefixStr, $cuisines)){
                             $cuisineId = $cuisines[$prefixStr];
-                            echo '';
                             $cookbooks = fetchcuisine($cuisineId);
-                            echo '';
                             if(!empty($cookbooks)){
                                 $content = '';
                                 foreach($cookbooks as $cookbook){

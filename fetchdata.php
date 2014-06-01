@@ -1,24 +1,26 @@
 <?php
-// If the cuisines.json can be used, this function don't need
-function fetchcuisines(){
+// If the tags.json can be used, this function don't need
+function fetchtags($parentId){
+    if(empty($parentId)) $parentId = '';
     $url = 'http://apis.juhe.cn/cook/category';
     $appkey = 'key=76ea9927c15a9f8f04cf8fc4cf9e0712';
-    $parentid = 'parentid=10002';
-    $querystring = $appkey."&".$parentid;
-    $json = file_get_contents($url."?".$querystring);
+    $querystring = $appkey.'&parentid='.$parentId;
+    $json = file_get_contents($url.'?'.$querystring);
     $data = json_decode($json, true);
     $result = array();
-    if(empty($data)) return $result;
-    foreach($data['result'][0]['list'] as $item){
-        $result[$item['name']] = $item['id'];
+    if(empty($data['result'])) return $result;
+    foreach($data['result'] as $parentitem){
+        foreach($parentitem['list'] as $item){
+            $result[$item['name']] = $item['id'];
+        }
     }
     return $result;
 }
 
-function fetchcuisine($cuisineId){
+function fetchtag($tagId){
     $url = 'http://apis.juhe.cn/cook/index';
     $appkey = 'key=76ea9927c15a9f8f04cf8fc4cf9e0712';
-    $querystring = $appkey.'&cid='.$cuisineId;
+    $querystring = $appkey.'&cid='.$tagId;
     $json = file_get_contents($url.'?'.$querystring);
     $data = json_decode($json, true);
     $result = array();
@@ -27,6 +29,15 @@ function fetchcuisine($cuisineId){
         array_push($result, array('title' => $item['title'], 'id' => $item['id']));
     }
     return $result;
+}
+
+// If the cuisines.json can be used, this function don't need
+function fetchcuisines(){
+    return fetchtags(10002);
+}
+
+function fetchcuisine($cuisineId){
+    return fetchtag($cuisineId);
 }
 
 function fetchcookbook($cookbookId){
@@ -41,4 +52,17 @@ function fetchcookbook($cookbookId){
     return $cookbook;
 }
 
+function fetchcookbooks($keyword){
+    $url = 'http://apis.juhe.cn/cook/query.php';
+    $appkey = 'key=76ea9927c15a9f8f04cf8fc4cf9e0712';
+    $querystring = $appkey.'&menu='.urlencode($keyword);
+    $json = file_get_contents($url.'?'.$querystring);
+    $data = json_decode($json, true);
+    $result = array();
+    if(empty($data['result'])) return $result;
+    foreach($data['result']['data'] as $item){
+        array_push($result, array('title' => $item['title'], 'id' => $item['id']));
+    }
+    return $result;
+}
 ?>

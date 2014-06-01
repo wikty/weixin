@@ -118,21 +118,42 @@ class wechatCallbackapiTest
                 $prefixStr = mb_substr($keyword, 0, -2, "UTF-8"); // query word
                 $suffixStr = mb_substr($keyword, -2, 2, "UTF-8"); // query key
                 switch($suffixStr){
-                    case "食材":
-                        
-                        break;
                     case "菜名":
-
+                    case "食材":
+                        echo '';
+                        $contentStr = '';
+                        $cookbooks = fetchcookbooks($prefixStr);
+                        if(!empty($cookbooks)){
+                            $contentStr = '【'.$prefixStr.'】'.'的菜谱有：';
+                            foreach($cookbooks as $cookbook){
+                                $contentStr .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                            }
+                            $contentStr .="\n".'【温馨提示】查询菜谱请输入相应的编号。';
+                        }
+                        if(empty($contentStr)){
+                            if($suffixStr == '菜名'){
+                                $contentStr = 'Sorry，系统中没有菜谱【'.$prefixStr.'】'.
+                                        "\n".'或者你应将该菜名换成习惯的称呼'.
+                                        "\n".'请试试别的。';
+                            }
+                            else{// is 食材
+                                $contentStr = 'Sorry，系统中没有以【'.$prefixStr.'】为食材的菜谱'.
+                                        "\n".'请试试别的。';
+                            }
+                        }
                         break;
                     case "菜系":
                         $json = file_get_contents('./cuisines.json');
                         $cuisines = json_decode($json, true);
                         $contentStr = '';
+                        echo '';
                         if(array_key_exists($prefixStr, $cuisines)){
                             $cuisineId = $cuisines[$prefixStr];
+                            echo '';
                             $cookbooks = fetchcuisine($cuisineId);
+                            echo '';
                             if(!empty($cookbooks)){
-                                $contentStr = '【'.$prefixStr.'】'.'下的菜谱有：';
+                                $contentStr = '【'.$prefixStr.'】下的菜谱有：';
                                 foreach($cookbooks as $cookbook){
                                     $contentStr .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
                                 }
@@ -145,9 +166,30 @@ class wechatCallbackapiTest
                          }
                         break;
                     case "标签":
+                        echo '';
+                        $json = file_get_contents('./tags.json');
+                        echo '';
+                        $tags = json_decode($json, true);
+                        $contentStr = '';
+                        if(array_key_exists($prefixStr, $tags)){
+                            $tagId = $tag[$prefixStr];
+                            $cookbooks = fetchtag($tagId);
+                            echo '';
+                            if(!empty($cookbooks)){
+                                $contentStr = '【'.$prefixStr.'】标签下的菜单有：';
+                                foreach($cookbooks as $cookbook){
+                                    $contentStr .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                                }
+                                $contentStr .= "\n".'【温馨提示】查询菜谱请输入相应的编号。';
+                            }
+                        }
+                        if(empty($contentStr)){
+                            $contentStr .= "\n".'Sorry，系统中没有你要查找的标签【'.$prefix.'】'.
+                                    "\n".'请试试别的。';
+                        }
                         break;
                     default:
-
+                       
                         break;
                 }
             }

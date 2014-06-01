@@ -28,4 +28,12 @@ function fetchTags(){
     }
     file_put_contents('tags.json', json_encode($result));
 }
+
+function nsprintf($format, $argsarray){
+    foreach($argsarray as $key=>$value){
+        $format = preg_replace('/{{\s*'.$key.'\s*}}/', $value, $format);
+    }
+    return $format;
+}
+
 ?>

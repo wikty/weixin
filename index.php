@@ -2,7 +2,18 @@
 /**
   * wechat php test
   */
+
+// depend module
 include('./fetchdata.php');
+
+// depend function
+function nsprintf($format, $argsarray){
+    foreach($argsarray as $key=>$value){
+        $format = preg_replace('/{{\s*'.$key.'\s*}}/', $value, $format);
+    }
+    return $format;
+}
+
 //define your token
 define("TOKEN", "xiaowenbin_999");
 $wechatObj = new wechatCallbackapiTest();
@@ -14,6 +25,8 @@ $wechatObj->responseMsg();
 class wechatCallbackapiTest
 {
     private $helpText = '';
+    private $helpCommands = array();
+    private $feedbackText = '';
     
     public function __construct(){
         $this->helpText = "目前平台功能如下：".
@@ -22,6 +35,8 @@ class wechatCallbackapiTest
                         "\n"."【3】 输入地域菜系名，如输入：日本料理菜系，法国菜菜系，赣菜菜系".
                         "\n"."【4】 输入标签查询所属的菜谱，如输入：功效标签，人群标签，疾病标签".
                         "\n"."【5】 帮助命令：帮助，help，h";
+        $this->helpCommands = array('help', 'h', '帮助');
+        $this->feedbackText = '{{ prefix }}【{{ title }}】{{ suffix }}{{ content }}{{ tips }}';
     }
 
 	public function valid()
@@ -87,16 +102,17 @@ class wechatCallbackapiTest
         $keyword = trim($postObj->Content);
         if(!empty($keyword)){
 
-            // help text
-            if($keyword == 'help' || $keyword == 'h' || $keyword == "帮助"){
+            // help
+            if(in_array($keyword, $this->helpCommands)){
                 $contentStr = $this->helpText;
             }
             // cookbook
             else if(filter_var($keyword, FILTER_VALIDATE_INT)){
-                $cookbook = fetchcookbook($keyword);
+                $cookbook = fetchcookbook($keyword); // fetch cookbook by id
                 if(!empty($cookbook)){
                     // no "\n".'简介： '.$cookbook['imtro'].
-                    $contentStr = '【菜谱】'.$cookbook['title'].''.
+                    // no ['steps']['img']
+                    $contentStr = '【菜谱】'.$cookbook['title'].
                              "\n".'【编号】'.$cookbook['id'].
                              "\n".'【标签】'.$cookbook['tags'].
                              "\n".'【主料】'.$cookbook['ingredients'].
@@ -113,7 +129,7 @@ class wechatCallbackapiTest
                             "\n".'【3】如果你确认自己输入的【编号无误】，那应该是我们的数据变动了，如果你愿意帮助我们提升服务质量，您可以给我发邮件：xiaowenbin_999@163.com';
                 }
             }
-            // choose options
+            // other options: dishes, food, cuisine, tag, ...
             else{
                 $prefixStr = mb_substr($keyword, 0, -2, "UTF-8"); // query word
                 $suffixStr = mb_substr($keyword, -2, 2, "UTF-8"); // query key
@@ -124,21 +140,36 @@ class wechatCallbackapiTest
                         $contentStr = '';
                         $cookbooks = fetchcookbooks($prefixStr);
                         if(!empty($cookbooks)){
-                            $contentStr = '【'.$prefixStr.'】'.'的菜谱有：';
+                            $content = '';
                             foreach($cookbooks as $cookbook){
-                                $contentStr .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                                $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
                             }
-                            $contentStr .="\n".'【温馨提示】查询菜谱请输入相应的编号。';
+                            $contentStr = nsprintf($this->feedbackText, array(
+                                'prefix' => '',
+                                'title' => $prefixStr,
+                                'suffix' => '的菜谱有：',
+                                'content' => $content,
+                                'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
+                            ));
                         }
                         if(empty($contentStr)){
                             if($suffixStr == '菜名'){
-                                $contentStr = 'Sorry，系统中没有菜谱【'.$prefixStr.'】'.
-                                        "\n".'或者你应将该菜名换成习惯的称呼'.
-                                        "\n".'请试试别的。';
+                                $contentStr = nsprintf($this->feedbackText, array(
+                                    'prefix' => 'Sorry，系统中没有菜谱',
+                                    'title' => $prefixStr,
+                                    'suffix' => '',
+                                    'content' => "\n".'或者你应将该菜名换成习惯的称呼',
+                                    'tips' => "\n".'请试试别的。'
+                                ));
                             }
                             else{// is 食材
-                                $contentStr = 'Sorry，系统中没有以【'.$prefixStr.'】为食材的菜谱'.
-                                        "\n".'请试试别的。';
+                                $contentStr = nsprintf($this->feedbackText, array(
+                                    'prefix' => 'Sorry，系统中没有以',
+                                    'title' => $prefixStr,
+                                    'suffix' => '为食材的菜谱',
+                                    'content' => '',
+                                    'tips' => "\n".'请试试别的。'
+                                ));
                             }
                         }
                         break;
@@ -153,16 +184,27 @@ class wechatCallbackapiTest
                             $cookbooks = fetchcuisine($cuisineId);
                             echo '';
                             if(!empty($cookbooks)){
-                                $contentStr = '【'.$prefixStr.'】下的菜谱有：';
+                                $content = '';
                                 foreach($cookbooks as $cookbook){
-                                    $contentStr .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                                    $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
                                 }
-                                $contentStr .="\n".'【温馨提示】查询菜谱请输入相应的编号。';
+                                $contentStr = nsprintf($this->feedbackText, array(
+                                    'prefix' => '',
+                                    'title' => $prefixStr,
+                                    'suffix' => '下的菜谱有：',
+                                    'content' => $content,
+                                    'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
+                                ));
                             }
                          }
                          if(empty($contentStr)){
-                             $contentStr = 'Sorry，系统中没有你要查找的菜系名【'.$prefixStr.'】'.
-                                      "\n".'请试试别的。';
+                            $contentStr = nsprintf($this->feedbackText, array(
+                                'prefix' => 'Sorry，系统中没有你要查找的菜系名',
+                                'title' => $prefixStr,
+                                'suffix' => '',
+                                'content' => '',
+                                'tips' => "\n".'请试试别的。'
+                            ));
                          }
                         break;
                     case "标签":
@@ -176,16 +218,27 @@ class wechatCallbackapiTest
                             $cookbooks = fetchtag($tagId);
                             echo '';
                             if(!empty($cookbooks)){
-                                $contentStr = '【'.$prefixStr.'】标签下的菜单有：';
+                                $content = '';
                                 foreach($cookbooks as $cookbook){
-                                    $contentStr .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                                    $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
                                 }
-                                $contentStr .= "\n".'【温馨提示】查询菜谱请输入相应的编号。';
+                                $contentStr = nsprintf($this->feedbackText, array(
+                                    'prefix' => '',
+                                    'title' => $prefixStr,
+                                    'suffix' => '标签下的菜单有：',
+                                    'content' => $content,
+                                    'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
+                                ));
                             }
                         }
                         if(empty($contentStr)){
-                            $contentStr .= "\n".'Sorry，系统中没有你要查找的标签【'.$prefix.'】'.
-                                    "\n".'请试试别的。';
+                            $contentStr = nsprintf($this->feedbackText, array(
+                                'prefix' => 'Sorry，系统中没有你要查找的标签',
+                                'title' => $prefixStr,
+                                'suffix' => '',
+                                'content' => '',
+                                'tips' => "\n".'请试试别的。'
+                            ));
                         }
                         break;
                     default:

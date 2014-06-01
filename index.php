@@ -239,6 +239,9 @@ class wechatCallbackapiTest
                         }
                         break;
                     default:
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+                    /// you should uncomment following codes
                     // default is $keyword as 菜名
                         // $contentStr = '';
                         // $cookbooks = fetchcookbooks($keyword);

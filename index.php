@@ -96,23 +96,22 @@ class wechatCallbackapiTest
                 $cookbook = fetchcookbook($keyword);
                 if(!empty($cookbook)){
                     // no "\n".'简介： '.$cookbook['imtro'].
-                    $contentStr = '菜谱：【'.$cookbook['title'].'】'.
-                             "\n".'编号： '.$cookbook['id'].
-                             "\n".'标签： '.$cookbook['tags'].
-                             "\n".'主料： '.$cookbook['ingredients'].
-                             "\n".'辅料： '.$cookbook['burden'].
-                             "\n".'步骤： ';
+                    $contentStr = '【菜谱】'.$cookbook['title'].''.
+                             "\n".'【编号】'.$cookbook['id'].
+                             "\n".'【标签】'.$cookbook['tags'].
+                             "\n".'【主料】'.$cookbook['ingredients'].
+                             "\n".'【辅料】'.$cookbook['burden'].
+                             "\n".'【步骤】';
                     foreach($cookbook['steps'] as $step){
-                        $contentStr .= "\n\t".$step['step'];
+                        $contentStr .= "\n".$step['step'];
                     }
                 }
                 else{
                     $contentStr = '系统中没有编号为'.$keyword.'的菜谱，出现该状况的原因有：'.
-                            "\n".'1，可能实际输入的编号跟你期望的输入不一样，请仔细【核对编号】'.
-                            "\n".'2，如果你是【新手】在无意中输入了一串数字，那么现在你应该知道输入数字意味着查询特定编号的菜单，具体方法请输入“帮助”，“help”，进行查询'.
-                            "\n".'3，如果你确认自己输入的【编号无误】，那应该是我们的数据变动了，如果你愿意帮助我们提升服务质量，您可以给我发邮件：xiaowenbin_999@163.com';
+                            "\n".'【1】可能实际输入的编号跟你期望的输入不一样，请仔细【核对编号】'.
+                            "\n".'【2】如果你是【新手】在无意中输入了一串数字，那么现在你应该知道输入数字意味着查询特定编号的菜单，具体方法请输入“帮助”，“help”，进行查询'.
+                            "\n".'【3】如果你确认自己输入的【编号无误】，那应该是我们的数据变动了，如果你愿意帮助我们提升服务质量，您可以给我发邮件：xiaowenbin_999@163.com';
                 }
-                
             }
             // choose options
             else{
@@ -126,7 +125,8 @@ class wechatCallbackapiTest
 
                         break;
                     case "菜系":
-                        $cuisines = json_decode('cuisine.json', true);
+                        $json = file_get_contents('cuisine.json');
+                        $cuisines = json_decode($json, true);
                         if(array_key_exists($prefixStr, $cuisines)){
                             $cuisineId = $cuisines[$prefixStr];
                             $cookbooks = fetchcuisine($cuisineId);
@@ -135,10 +135,10 @@ class wechatCallbackapiTest
                                 foreach($cookbook as $cookbook){
                                     $contentStr .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
                                 }
-                                $contentStr .="\n\t".'【温馨提示】：查询菜谱请输入相应的编号';
+                                $contentStr .="\n".'【温馨提示】查询菜谱请输入相应的编号';
                             }
                          }
-                         $contentStr = 'Sorry，系统中没有你要查找的菜系名-'.$prefixStr.
+                         $contentStr = 'Sorry，系统中没有你要查找的菜系名【'.$prefixStr.'】'.
                                   "\n".'请试试别的。';
                         break;
                     case "标签":

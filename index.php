@@ -2,7 +2,7 @@
 /**
   * wechat php test
   */
-
+include('./fetchdata.php');
 //define your token
 define("TOKEN", "xiaowenbin_999");
 $wechatObj = new wechatCallbackapiTest();
@@ -13,6 +13,13 @@ $wechatObj->responseMsg();
 
 class wechatCallbackapiTest
 {
+    private $helpText = "目前平台功能如下：".
+                        "\n"."【1】 输入食材名查找菜谱，如输入：酸奶食材，韭菜食材，菠萝食材".
+                        "\n"."【2】 输入完整菜名或菜名的一部分，如输入：韭菜炒蛋皮菜名，果茶菜名".
+                        "\n"."【3】 输入地域菜系名，如输入：日本料理菜系，法国菜菜系，赣菜菜系".
+                        "\n"."【4】 输入标签查询所属的菜谱，如输入：功效标签，人群标签，疾病标签".
+                        "\n"."【5】 帮助命令：帮助，help，h";
+
 	public function valid()
     {
         // For first time, weixin server GET request
@@ -78,15 +85,66 @@ class wechatCallbackapiTest
 
             // help text
             if($keyword == 'help' || $keyword == 'h' || $keyword == "帮助"){
-                $contentStr = "目前平台功能如下：".
-                        "\n"."【1】 输入食材名查找菜谱，如输入：酸奶，韭菜，菠萝".
-                        "\n"."【2】 输入完整菜名或菜名的一部分，如输入：".
-                        "\n"."【3】 输入地域菜系名，如输入：日本料理，法国菜，赣菜";
+                $contentStr = $this->helpText;
             }
+            // cookbook
+            else if(filter_var($keyword, FILTER_VALIDATE_INT){
+                $cookbook = fetchcookbook($keyword);
+                if(!empty($cookbook)){
+                    // no "\n".'简介： '.$cookbook['imtro'].
+                    $contentStr = '菜谱：【'.$cookbook['title'].'】'.
+                             "\n".'编号： '.$cookbook['id'].
+                             "\n".'标签： '.$cookbook['tags'].
+                             "\n".'主料： '.$cookbook['ingredients'].
+                             "\n".'辅料： '.$cookbook['burden'].
+                             "\n".'步骤： ';
+                    foreach($cookbook['steps'] as $step){
+                        $contentStr .= "\n\t".$step['step'];
+                    }
+                }
+                else{
+                    $contentStr = '系统中没有编号为'.$keyword.'的菜谱，出现该状况的原因有：'.
+                            "\n".'1，可能实际输入的编号跟你期望的输入不一样，请仔细【核对编号】'.
+                            "\n".'2，如果你是【新手】在无意中输入了一串数字，那么现在你应该知道输入数字意味着查询特定编号的菜单，具体方法请输入“帮助”，“help”，进行查询'.
+                            "\n".'3，如果你确认自己输入的【编号无误】，那应该是我们的数据变动了，如果你愿意帮助我们提升服务质量，您可以给我发邮件：xiaowenbin_999@163.com';
+                }
+                
+            }
+            // choose options
             else{
-/////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////should parse $keyword to logical
-                $contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
+                $prefixStr = mb_substr($keyword, 0, -2, "UTF-8"); // query word
+                $suffixStr = mb_substr($keyword, -2, 2, "UTF-8"); // query key
+                switch($suffixStr){
+                    case "食材":
+                        
+                        break;
+                    case "菜名":
+
+                        break;
+                    case "菜系":
+                        $cuisines = json_decode('cuisine.json', true);
+                        if(array_key_exists($prefixStr, $cuisines)){
+                            $cuisineId = $cuisines[$prefixStr];
+                            $cookbooks = fetchcuisine($cuisineId);
+                            if(!empty($cookbooks)){
+                                $contentStr = '【'.$prefixStr.'】'.'下的菜谱有：';
+                                foreach($cookbook as $cookbook){
+                                    $contentStr .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                                }
+                                $contentStr .="\n\t".'【温馨提示】：查询菜谱请输入相应的编号';
+                            }
+                         }
+                         $contentStr = 'Sorry，系统中没有你要查找的菜系名-'.$prefixStr.
+                                  "\n".'请试试别的。';
+                        break;
+                    case "标签":
+                        break;
+                    default:
+
+                        break;
+                }
+
+                //$contentStr = "你好！每天一菜现处于开发阶段，码农正在流汗，很快就能使用。";
             }
             
             $resultStr = $this->generateTextResponse($postObj, $contentStr);
@@ -107,10 +165,7 @@ class wechatCallbackapiTest
                 $contentStr = "感谢您关注【每天一菜】".
                 "\n"."微信号：dailycookbook".
                 "\n"."我们致力于为您提供一本全面，方便易用的百科式菜谱，每天一道菜让你成为巧厨能手。".
-                "\n"."目前平台功能如下：".
-                "\n"."【1】 输入食材名查找菜谱，如输入：酸奶，韭菜，菠萝".
-                "\n"."【2】 输入完整菜名或菜名的一部分，如输入：".
-                "\n"."【3】 输入地域菜系名，如输入：日本料理，法国菜，赣菜".
+                $this->helpText.
                 "\n"."更多内容，敬请期待...";
                 break;
             case "unsubscribe":

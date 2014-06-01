@@ -24,7 +24,7 @@ function fetchcuisine($cuisineId){
     $result = array();
     if(empty($data['result'])) return $result;
     foreach($data['result']['data'] as $item){
-        array_push($result, array($item['title'] => $item['id']));
+        array_push($result, array('title' => $item['title'], 'id' => $item['id']));
     }
     return $result;
 }

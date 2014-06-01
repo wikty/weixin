@@ -127,19 +127,22 @@ class wechatCallbackapiTest
                     case "菜系":
                         $json = file_get_contents('./cuisines.json');
                         $cuisines = json_decode($json, true);
+                        $contentStr = '';
                         if(array_key_exists($prefixStr, $cuisines)){
                             $cuisineId = $cuisines[$prefixStr];
                             $cookbooks = fetchcuisine($cuisineId);
                             if(!empty($cookbooks)){
                                 $contentStr = '【'.$prefixStr.'】'.'下的菜谱有：';
-                                foreach($cookbook as $cookbook){
+                                foreach($cookbooks as $cookbook){
                                     $contentStr .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
                                 }
-                                $contentStr .="\n".'【温馨提示】查询菜谱请输入相应的编号';
+                                $contentStr .="\n".'【温馨提示】查询菜谱请输入相应的编号。';
                             }
                          }
-                         $contentStr = 'Sorry，系统中没有你要查找的菜系名【'.$prefixStr.'】'.
-                                  "\n".'请试试别的。';
+                         if(empty($contentStr)){
+                             $contentStr = 'Sorry，系统中没有你要查找的菜系名【'.$prefixStr.'】'.
+                                      "\n".'请试试别的。';
+                         }
                         break;
                     case "标签":
                         break;

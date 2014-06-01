@@ -1,4 +1,5 @@
 <?php
+// If the cuisines.json can be used, this function don't need
 function fetchcuisines(){
     $url = 'http://apis.juhe.cn/cook/category';
     $appkey = 'key=76ea9927c15a9f8f04cf8fc4cf9e0712';
@@ -9,7 +10,7 @@ function fetchcuisines(){
     $result = array();
     if(empty($data)) return $result;
     foreach($data['result'][0]['list'] as $item){
-        array_push($result, array($item['name'] => $item['id']));
+        $result[$item['name']] = $item['id'];
     }
     return $result;
 }

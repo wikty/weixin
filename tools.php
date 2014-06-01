@@ -8,8 +8,8 @@ function fetchCuisine(){
     $data = json_decode($json, true);
     $result = array();
     foreach($data['result'][0]['list'] as $item){
-        array_push($result, array($item['name'] => $item['id']));
+        $result[$item['name']] = $item['id'];
     }
-    file_put_contents("cuisine.json", json_encode($result));
+    file_put_contents("cuisines.json", json_encode($result));
 }
 ?>

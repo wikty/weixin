@@ -125,9 +125,8 @@ class wechatCallbackapiTest
 
                         break;
                     case "菜系":
-                        //$json = file_get_contents('./cuisine.json');
-                        //$cuisines = json_decode($json, true);
-                        $cuisines = fetchcuisines();
+                        $json = file_get_contents('./cuisine.json');
+                        $cuisines = json_decode($json, true);
                         if(array_key_exists($prefixStr, $cuisines)){
                             $cuisineId = $cuisines[$prefixStr];
                             $cookbooks = fetchcuisine($cuisineId);

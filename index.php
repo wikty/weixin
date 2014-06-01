@@ -137,112 +137,112 @@ class wechatCallbackapiTest
                 switch($suffixStr){
                     case "菜名":
                     case "食材":
-                        $contentStr = '';
-                        $cookbooks = fetchcookbooks($prefixStr);
-                        if(!empty($cookbooks)){
-                            $content = '';
-                            foreach($cookbooks as $cookbook){
-                                $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
-                            }
-                            $contentStr = nsprintf($this->feedbackText, array(
-                                'prefix' => '',
-                                'title' => $prefixStr,
-                                'suffix' => '的菜谱有：',
-                                'content' => $content,
-                                'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
-                            ));
-                        }
-                        if(empty($contentStr)){
-                            if($suffixStr == '菜名'){
-                                $contentStr = nsprintf($this->feedbackText, array(
-                                    'prefix' => 'Sorry，系统中没有菜谱',
-                                    'title' => $prefixStr,
-                                    'suffix' => '',
-                                    'content' => "\n".'或者你应将该菜名换成习惯的称呼',
-                                    'tips' => "\n".'请试试别的。'
-                                ));
-                            }
-                            else{// is 食材
-                                $contentStr = nsprintf($this->feedbackText, array(
-                                    'prefix' => 'Sorry，系统中没有以',
-                                    'title' => $prefixStr,
-                                    'suffix' => '为食材的菜谱',
-                                    'content' => '',
-                                    'tips' => "\n".'请试试别的。'
-                                ));
-                            }
-                        }
+                        $contentStr = $suffixStr;
+                        // $contentStr = '';
+                        // $cookbooks = fetchcookbooks($prefixStr);
+                        // if(!empty($cookbooks)){
+                        //     $content = '';
+                        //     foreach($cookbooks as $cookbook){
+                        //         $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                        //     }
+                        //     $contentStr = nsprintf($this->feedbackText, array(
+                        //         'prefix' => '',
+                        //         'title' => $prefixStr,
+                        //         'suffix' => '的菜谱有：',
+                        //         'content' => $content,
+                        //         'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
+                        //     ));
+                        // }
+                        // if(empty($contentStr)){
+                        //     if($suffixStr == '菜名'){
+                        //         $contentStr = nsprintf($this->feedbackText, array(
+                        //             'prefix' => 'Sorry，系统中没有菜谱',
+                        //             'title' => $prefixStr,
+                        //             'suffix' => '',
+                        //             'content' => "\n".'或者你应将该菜名换成习惯的称呼',
+                        //             'tips' => "\n".'请试试别的。'
+                        //         ));
+                        //     }
+                        //     else{// is 食材
+                        //         $contentStr = nsprintf($this->feedbackText, array(
+                        //             'prefix' => 'Sorry，系统中没有以',
+                        //             'title' => $prefixStr,
+                        //             'suffix' => '为食材的菜谱',
+                        //             'content' => '',
+                        //             'tips' => "\n".'请试试别的。'
+                        //         ));
+                        //     }
+                        // }
                         break;
                     case "菜系":
-                        $json = file_get_contents('./cuisines.json');
-                        $cuisines = json_decode($json, true);
-                        $contentStr = '';
-                        if(array_key_exists($prefixStr, $cuisines)){
-                            $cuisineId = $cuisines[$prefixStr];
-                            $cookbooks = fetchcuisine($cuisineId);
-                            if(!empty($cookbooks)){
-                                $content = '';
-                                foreach($cookbooks as $cookbook){
-                                    $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
-                                }
-                                $contentStr = nsprintf($this->feedbackText, array(
-                                    'prefix' => '',
-                                    'title' => $prefixStr,
-                                    'suffix' => '下的菜谱有：',
-                                    'content' => $content,
-                                    'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
-                                ));
-                            }
-                         }
-                         if(empty($contentStr)){
-                            $contentStr = nsprintf($this->feedbackText, array(
-                                'prefix' => 'Sorry，系统中没有你要查找的菜系名',
-                                'title' => $prefixStr,
-                                'suffix' => '',
-                                'content' => '',
-                                'tips' => "\n".'请试试别的。'
-                            ));
-                         }
+                        $contentStr = $suffixStr;
+
+                        // $json = file_get_contents('./cuisines.json');
+                        // $cuisines = json_decode($json, true);
+                        // $contentStr = '';
+                        // if(array_key_exists($prefixStr, $cuisines)){
+                        //     $cuisineId = $cuisines[$prefixStr];
+                        //     $cookbooks = fetchcuisine($cuisineId);
+                        //     if(!empty($cookbooks)){
+                        //         $content = '';
+                        //         foreach($cookbooks as $cookbook){
+                        //             $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                        //         }
+                        //         $contentStr = nsprintf($this->feedbackText, array(
+                        //             'prefix' => '',
+                        //             'title' => $prefixStr,
+                        //             'suffix' => '下的菜谱有：',
+                        //             'content' => $content,
+                        //             'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
+                        //         ));
+                        //     }
+                        //  }
+                         // if(empty($contentStr)){
+                         //    $contentStr = nsprintf($this->feedbackText, array(
+                         //        'prefix' => 'Sorry，系统中没有你要查找的菜系名',
+                         //        'title' => $prefixStr,
+                         //        'suffix' => '',
+                         //        'content' => '',
+                         //        'tips' => "\n".'请试试别的。'
+                         //    ));
+                         // }
                         break;
                     case "标签":
-                        echo '';
-                        $json = file_get_contents('./tags.json');
-                        echo '';
-                        $tags = json_decode($json, true);
-                        $contentStr = '';
-                        if(array_key_exists($prefixStr, $tags)){
-                            $tagId = $tag[$prefixStr];
-                            $cookbooks = fetchtag($tagId);
-                            echo '';
-                            if(!empty($cookbooks)){
-                                $content = '';
-                                foreach($cookbooks as $cookbook){
-                                    $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
-                                }
-                                $contentStr = nsprintf($this->feedbackText, array(
-                                    'prefix' => '',
-                                    'title' => $prefixStr,
-                                    'suffix' => '标签下的菜单有：',
-                                    'content' => $content,
-                                    'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
-                                ));
-                            }
-                        }
-                        if(empty($contentStr)){
-                            $contentStr = nsprintf($this->feedbackText, array(
-                                'prefix' => 'Sorry，系统中没有你要查找的标签',
-                                'title' => $prefixStr,
-                                'suffix' => '',
-                                'content' => '',
-                                'tips' => "\n".'请试试别的。'
-                            ));
-                        }
+                        $contentStr = $suffixStr;
+
+                        // $json = file_get_contents('./tags.json');
+                        // $tags = json_decode($json, true);
+                        // $contentStr = '';
+                        // if(array_key_exists($prefixStr, $tags)){
+                        //     $tagId = $tag[$prefixStr];
+                        //     $cookbooks = fetchtag($tagId);
+                        //     echo '';
+                        //     if(!empty($cookbooks)){
+                        //         $content = '';
+                        //         foreach($cookbooks as $cookbook){
+                        //             $content .= "\n".$cookbook['title'].'（编号：'.$cookbook['id'].'）';
+                        //         }
+                        //         $contentStr = nsprintf($this->feedbackText, array(
+                        //             'prefix' => '',
+                        //             'title' => $prefixStr,
+                        //             'suffix' => '标签下的菜单有：',
+                        //             'content' => $content,
+                        //             'tips' => "\n".'【温馨提示】查询菜谱请输入相应的编号。'
+                        //         ));
+                        //     }
+                        // }
+                        // if(empty($contentStr)){
+                        //     $contentStr = nsprintf($this->feedbackText, array(
+                        //         'prefix' => 'Sorry，系统中没有你要查找的标签',
+                        //         'title' => $prefixStr,
+                        //         'suffix' => '',
+                        //         'content' => '',
+                        //         'tips' => "\n".'请试试别的。'
+                        //     ));
+                        // }
                         break;
-                    default:
-////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-                    /// you should uncomment following codes
-                    // default is $keyword as 菜名
+                    default:// default is $keyword as 菜名
+                        $contentStr = $keyword;
                         // $contentStr = '';
                         // $cookbooks = fetchcookbooks($keyword);
                         // if(!empty($cookbooks)){
@@ -267,7 +267,6 @@ class wechatCallbackapiTest
                         //         'tips' => "\n".'请试试别的。'
                         //     ));
                         // }
-                        $contentStr = '你好！本平台现处于测试阶段，码农正在流汗很快就能使用。';
                         break;
                 }
             }

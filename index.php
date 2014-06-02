@@ -267,11 +267,11 @@ class wechatCallbackapiTest
                         break;
                 }
             //}
-        // }
-        // else{
-        //     $contentStr = $this->helpText;
-        // }
-        $contentStr = $this->helpText;
+        }
+        else{
+            $contentStr = $this->helpText;
+        }
+
         $resultStr = $this->generateTextResponse($postObj, $contentStr);
         return $resultStr;
     }

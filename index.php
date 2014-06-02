@@ -103,12 +103,10 @@ class wechatCallbackapiTest
         $keyword = trim($postObj->Content);
         if(!empty($keyword)){
 
-            // help
-            if(in_array($keyword, $this->helpCommands)){
+            if(in_array($keyword, $this->helpCommands)){                            // help
                 $contentStr = $this->helpText;
             }
-            // cookbook
-            else if(filter_var($keyword, FILTER_VALIDATE_INT)){
+            elseif(filter_var($keyword, FILTER_VALIDATE_INT)){                      // cookbook
                 $cookbook = fetchcookbook($keyword); // fetch cookbook by id
                 if(!empty($cookbook)){
                     // no "\n".'简介： '.$cookbook['imtro'].
@@ -130,8 +128,7 @@ class wechatCallbackapiTest
                             "\n".'【3】如果你确认自己输入的【编号无误】，那应该是我们的数据变动了，如果你愿意帮助我们提升服务质量，您可以给我发邮件：xiaowenbin_999@163.com';
                 }
             }
-            // other options: dishes, food, cuisine, tag, ...
-            else{
+            else{                                       // other options: dishes, food, cuisine, tag, ...
                 $prefixStr = mb_substr($keyword, 0, -2, "UTF-8"); // query word
                 $suffixStr = mb_substr($keyword, -2, 2, "UTF-8"); // query key
                 switch($suffixStr){

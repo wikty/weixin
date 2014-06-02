@@ -239,7 +239,7 @@ class wechatCallbackapiTest
                         // }
                         break;
                     default:// default is $keyword as 菜名
-                        $contentStr = $keyword;
+                        $contentStr = $this->helpText;
                         // $contentStr = '';
                         // $cookbooks = fetchcookbooks($keyword);
                         // if(!empty($cookbooks)){

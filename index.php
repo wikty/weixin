@@ -33,7 +33,7 @@ class wechatCallbackapiTest
                         "\n"."【1】 输入食材名查找菜谱，如输入：酸奶食材，韭菜食材，菠萝食材".
                         "\n"."【2】 输入完整菜名或菜名的一部分，如输入：韭菜炒蛋皮菜名，果茶菜名".
                         "\n"."【3】 输入地域菜系名，如输入：日本料理菜系，法国菜菜系，赣菜菜系".
-                        "\n"."【4】 输入标签查询所属的菜谱，如输入：功效标签，人群标签，疾病标签".
+                        "\n"."【4】 输入标签查询所属的菜谱，如输入：素菜标签，炖品标签，端午节标签，孜然味标签，幼儿标签，美容标签".
                         "\n"."【5】 帮助命令：帮助，help，h";
         $this->helpCommands = array('help', 'h', '帮助');
         $this->feedbackText = '{{ prefix }}【{{ title }}】{{ suffix }}{{ content }}{{ tips }}';
@@ -237,7 +237,7 @@ class wechatCallbackapiTest
                         }
                         break;
                     default:// default is $keyword as 菜名
-                    
+
                         $contentStr = '';
                         $cookbooks = fetchcookbooks($keyword);
                         if(!empty($cookbooks)){
@@ -258,7 +258,7 @@ class wechatCallbackapiTest
                                 'prefix' => 'Sorry，系统中没有菜谱',
                                 'title' => $keyword,
                                 'suffix' => '',
-                                'content' => "\n".'或者你应将该菜名换成习惯的称呼',
+                                'content' => "\n".'或者你应将该菜名换成习惯的称呼，如果你想要获得帮助，请输入：帮助或者help',
                                 'tips' => "\n".'请试试别的。'
                             ));
                         }

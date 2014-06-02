@@ -30,7 +30,6 @@ class wechatCallbackapiTest
     
     public function __construct(){
         $this->helpText = "目前平台功能如下：".
-                        "\n"."【0】 平台正在测试阶段，现在仅支持帮助功能和输入一串数字来返回一个菜谱".
                         "\n"."【1】 输入食材名查找菜谱，如输入：酸奶食材，韭菜食材，菠萝食材".
                         "\n"."【2】 输入完整菜名或菜名的一部分，如输入：韭菜炒蛋皮菜名，果茶菜名".
                         "\n"."【3】 输入地域菜系名，如输入：日本料理菜系，法国菜菜系，赣菜菜系".
@@ -129,11 +128,14 @@ class wechatCallbackapiTest
                 }
             }
             else{                                   // other options: dishes, food, cuisine, tag, ...
+                ////////////////////////////////////////////
+                //////////////heroku can us mb_substr////////////
                 $prefixStr = mb_substr($keyword, 0, -2, "UTF-8"); // query word
                 $suffixStr = mb_substr($keyword, -2, 2, "UTF-8"); // query key
                 switch($suffixStr){
                     case "菜名":
                     case "食材":
+
                         $contentStr = '';
                         $cookbooks = fetchcookbooks($prefixStr);
                         if(!empty($cookbooks)){
@@ -208,9 +210,8 @@ class wechatCallbackapiTest
                         $tags = json_decode($json, true);
                         $contentStr = '';
                         if(array_key_exists($prefixStr, $tags)){
-                            $tagId = $tag[$prefixStr];
+                            $tagId = $tags[$prefixStr];
                             $cookbooks = fetchtag($tagId);
-                            echo '';
                             if(!empty($cookbooks)){
                                 $content = '';
                                 foreach($cookbooks as $cookbook){
@@ -236,6 +237,7 @@ class wechatCallbackapiTest
                         }
                         break;
                     default:// default is $keyword as 菜名
+                    
                         $contentStr = '';
                         $cookbooks = fetchcookbooks($keyword);
                         if(!empty($cookbooks)){

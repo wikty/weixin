@@ -271,6 +271,7 @@ class wechatCallbackapiTest
         // else{
         //     $contentStr = $this->helpText;
         // }
+        $contentStr = $this->helpText;
         $resultStr = $this->generateTextResponse($postObj, $contentStr);
         return $resultStr;
     }

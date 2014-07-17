@@ -3,8 +3,10 @@
 
 ##如有需要请，请关注我##
 微信号：**dailycookbook**
+
 微信公众平台名称：**每天一菜**
-二维码：![dailycookbook](https://github.com/wikty/weixin/qrcode.jpg)
+
+二维码：![dailycookbook](https://github.com/wikty/weixin/blob/master/qrcode.jpg)
 
 
 ##业务逻辑简介##
